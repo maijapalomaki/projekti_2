@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the header */
+.header {
+  background-color: #f1f1f1;
+ background-image: url("rokote.png"); 
+  padding: 30px;
+  text-align: center;
+  font-size: 35px;
+}
+
+/* Create three unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Left and right column */
+.column.side {
+  width: 25%;
+ 
+}
+
+/* Middle column */
+.column.middle {
+  width: 50%;
+   background-image: url("pöpö_kuva.png");
+   text-align: center;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Style the footer */
+.footer {
+  background-color: #008ae6;
+  padding: 10px;
+  text-align: center;
+  color: #ffffff;
+ ;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media (max-width: 600px) {
+  .column.side, .column.middle {
+    width: 100%;
+  }
+  
+ 
+  
+}
+</style>
+</head>
+<body>
+
+
+
+<div class="header">
+  <h3>Covid-19 tartuntojen kokonaismäärä Suomessa</h3>  
+</div>                                                    <! -- Pohjana on yksinkertainen css layout, jonka html pohja koostuu column osioista. Kuvat on luotu canvalla.--> 
+
+<div class="row">
+  <div class="column side" style="background-color:#b3e0ff;">
+  <p id="this"></p>
+  </div>
+  
+  <div class="column middle" style="background-color:#b3e0ff;">
+  <h2>Tapaukset</h2>
+<p id ="tapaukset"></p>
+<h3>Kuolemat</h3>
+<p id="kuolemat"></p>
+<h5>Väkiluku</p>
+<p id="luku"></p>
+
+  </div>
+   <div class="column side" style="background-color:#b3e0ff;">
+   <p>Etsi muiden pohjoismaiden lukuja:</p>
+    <input id="search" type=text>
+    <input type=button onclick="Search()" value="search"/>
+    <p id="out"></p>
+
+    
+</div>
+ </div>
+
+<div class="footer">
+  <h6>Viimeksi päivitetty:</h6>
+<p id="update"></p> 
+</div>
+
+</body>
+<script>
+window.onload = function() {
+luvut();
+
+}
+
+function luvut() { 
+fetch('https://coronavirus-tracker-api.herokuapp.com/v2/locations/118') //Hakee tiedot api:n kautta.
+.then(function(resp) { return resp.json() } ) //Tuo tiedon json muodossa. 
+.then(function(data) {
+let luku = data.location.country_population; //hakee  halutut tiedot avaimilla.
+let update = data.location.last_updated;
+let cases = data.location.latest.confirmed;
+let deaths = data.location.latest.deaths;
+
+document.getElementById('luku').innerHTML = luku.toLocaleString('en'); //printtaa luvut esille.
+document.getElementById('update').innerHTML = update.toLocaleString('en');
+document.getElementById('tapaukset').innerHTML = cases.toLocaleString('en');
+document.getElementById('kuolemat').innerHTML = deaths.toLocaleString('en');
+})
+.catch(function() {
+console.log("error");
+})
+setTimeout(luvut, 42200000)
+}
+
+var Search = function() {
+ input = document.getElementById("search").value; 
+if(input="Ruotsi") {  //Haku muuttuja antaa tiedot käyttäjän haun mukaan ja printtaa ne listana. 
+
+fetch('https://coronavirus-tracker-api.herokuapp.com/v2/locations/238')
+.then(function(resp) { return resp.json() } )
+.then(function(data) {
+
+
+let luku = data.location.country_population;
+let update = data.location.last_updated;
+let cases = data.location.latest.confirmed;
+let deaths = data.location.latest.deaths;
+var tab ="<ul>";
+
+
+tab += '<li>' +"Ruotsin väkiluku on:" +luku +  '</li>';
+tab += '<li>' + "tapaukset:"+cases + '</li>';
+tab += '<li>' + "kuolemia:"+deaths + '</li>';
+
+
+tab+="</ul>";
+document.getElementById('out').innerHTML = tab;
+
+
+
+})
+
+
+if(input="Norja") {
+fetch('https://coronavirus-tracker-api.herokuapp.com/v2/locations/202')
+.then(function(resp) { return resp.json() } )
+.then(function(data) {
+let luku = data.location.country_population;
+let update = data.location.last_updated;
+let cases = data.location.latest.confirmed;
+let deaths = data.location.latest.deaths;
+
+var tabN ="<ul>";
+
+
+tabN += '<li>' +"Norjan väkiluku on:" +luku +  '</li>';
+tabN += '<li>' + "tapaukset:"+cases + '</li>';
+tabN += '<li>' + "kuolemia:"+deaths + '</li>';
+
+
+tabN+="</ul>";
+document.getElementById('out').innerHTML = tabN;
+  
+})
+
+
+
+if(input="Tanska") {
+fetch('https://coronavirus-tracker-api.herokuapp.com/v2/locations/104')
+.then(function(resp) { return resp.json() } )
+.then(function(data) {
+let luku = data.location.country_population;
+let update = data.location.last_updated;
+let cases = data.location.latest.confirmed;
+let deaths = data.location.latest.deaths;
+
+var tabD ="<ul>";
+
+
+tabD += '<li>' +"Tanskan väkiluku on:" +luku +  '</li>';
+tabD += '<li>' + "tapaukset:"+cases + '</li>';
+tabD += '<li>' + "kuolemia:"+deaths + '</li>';
+
+
+tabD+="</ul>";
+document.getElementById('out').innerHTML = tabD;
+  
+})
+
+.catch(function() {
+console.log("error");
+})
+setTimeout(Search, 43200000)
+
+} else {
+document.getElementById('out').innerHTML = "Incorrect input";
+}
+}
+}
+
+
+
+}
+</script>
+
+</html>
+
+
